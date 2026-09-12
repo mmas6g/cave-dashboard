@@ -68,7 +68,7 @@ export default function Home() {
             activeTab === 'cfb' ? 'bg-white text-stone-900' : 'bg-stone-700 text-stone-300'
           }`}
         >
-          Saturday - College Football
+          Saturday - CFB 
         </button>
         <button
           onClick={() => setActiveTab('nfl')}
