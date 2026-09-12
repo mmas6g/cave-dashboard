@@ -59,13 +59,13 @@ export default function Home() {
   const currentCaveStatus = activeTab === 'cfb' ? cfbOpen : nflOpen;
 
   return (
-    <main className="min-h-screen bg-[#FBF3E7] text-stone-800 p-6">
+    <main className="min-h-screen bg-[#3E2317] text-white p-6">
       {/* Tabs */}
       <div className="flex justify-center gap-4 mb-6">
         <button
           onClick={() => setActiveTab('cfb')}
           className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-            activeTab === 'cfb' ? 'bg-orange-600 text-white' : 'bg-stone-200 text-stone-600'
+            activeTab === 'cfb' ? 'bg-white text-stone-900' : 'bg-stone-700 text-stone-300'
           }`}
         >
           Saturday - College Football
@@ -73,7 +73,7 @@ export default function Home() {
         <button
           onClick={() => setActiveTab('nfl')}
           className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-            activeTab === 'nfl' ? 'bg-blue-700 text-white' : 'bg-stone-200 text-stone-600'
+            activeTab === 'nfl' ? 'bg-white text-stone-900' : 'bg-stone-700 text-stone-300'
           }`}
         >
           Sunday - NFL
@@ -81,7 +81,7 @@ export default function Home() {
       </div>
 
       {/* Neon Cave Status Banner */}
-      <div className="bg-stone-900 rounded-lg py-4 mb-8 mx-auto max-w-md text-center">
+      <div className="bg-black rounded-lg py-4 mb-8 mx-auto max-w-md text-center border border-stone-700">
         {currentCaveStatus === null ? (
           <span className="text-stone-500">Loading status...</span>
         ) : (
@@ -95,7 +95,7 @@ export default function Home() {
         )}
       </div>
 
-      {loading && <p className="text-center text-stone-500">Loading games...</p>}
+      {loading && <p className="text-center text-stone-400">Loading games...</p>}
 
       {!loading && activeTab === 'cfb' && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -104,6 +104,7 @@ export default function Home() {
               key={window}
               title={window}
               games={cfbGames.filter((g) => g.window === window)}
+              limit={6}
             />
           ))}
         </div>
@@ -127,49 +128,64 @@ export default function Home() {
 function WindowSection({
   title,
   games,
+  limit,
 }: {
   title: string;
   games: (CfbGame | NflGame)[];
+  limit?: number;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const sortedGames = [...games].sort((a, b) => a.gameRank - b.gameRank);
+  const hasMore = !!limit && sortedGames.length > limit;
+  const visibleGames = expanded || !limit ? sortedGames : sortedGames.slice(0, limit);
 
   return (
-    <div className="bg-white rounded-lg p-4 border border-amber-200 shadow-sm">
-      <h2 className="text-xl font-semibold mb-3 text-stone-800">{title}</h2>
+    <div className="bg-white rounded-lg p-4 border border-stone-300 shadow-sm">
+      <h2 className="text-xl font-semibold mb-3 text-stone-900">{title}</h2>
       {sortedGames.length === 0 && (
         <p className="text-stone-400 text-sm">No games in this window</p>
       )}
       <div className="space-y-3">
-        {sortedGames.map((game, index) => {
+        {visibleGames.map((game, index) => {
           const isBigTV = index === 0;
           return (
             <div
               key={game.id}
               className={`rounded-lg p-3 border ${
-                isBigTV ? 'border-orange-400 bg-orange-50' : 'border-amber-200 bg-amber-50'
+                isBigTV ? 'bg-black border-black' : 'bg-stone-100 border-stone-300'
               }`}
             >
               {isBigTV && (
-                <div className="text-xs font-bold text-orange-600 mb-1">📺 BIG TV</div>
+                <div className="text-xs font-bold text-white mb-1">📺 BIG TV</div>
               )}
-              <div className="text-xs text-stone-500 mb-2">{game.network}</div>
-              <div className="flex items-center justify-between text-sm text-stone-800">
+              <div className={`text-xs mb-2 ${isBigTV ? 'text-stone-400' : 'text-stone-500'}`}>
+                {game.network}
+              </div>
+              <div
+                className={`flex items-center justify-between text-sm ${
+                  isBigTV ? 'text-white' : 'text-stone-900'
+                }`}
+              >
                 <div className="flex items-center gap-1">
                   {game.away.logo && (
                     <img src={game.away.logo} alt={game.away.abbreviation} className="w-5 h-5" />
                   )}
                   {'rank' in game.away && game.away.rank && (
-                    <span className="text-amber-600 font-bold">#{game.away.rank}</span>
+                    <span className={`font-bold ${isBigTV ? 'text-amber-400' : 'text-amber-700'}`}>
+                      #{game.away.rank}
+                    </span>
                   )}
                   <span>{game.away.abbreviation}</span>
                 </div>
-                <span className="text-stone-400 text-xs">@</span>
+                <span className={isBigTV ? 'text-stone-500' : 'text-stone-400'}>@</span>
                 <div className="flex items-center gap-1">
                   {game.home.logo && (
                     <img src={game.home.logo} alt={game.home.abbreviation} className="w-5 h-5" />
                   )}
                   {'rank' in game.home && game.home.rank && (
-                    <span className="text-amber-600 font-bold">#{game.home.rank}</span>
+                    <span className={`font-bold ${isBigTV ? 'text-amber-400' : 'text-amber-700'}`}>
+                      #{game.home.rank}
+                    </span>
                   )}
                   <span>{game.home.abbreviation}</span>
                 </div>
@@ -178,6 +194,18 @@ function WindowSection({
           );
         })}
       </div>
+
+      {hasMore && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-3 w-full text-center text-sm font-semibold text-stone-700 hover:text-black flex items-center justify-center gap-1"
+        >
+          {expanded ? 'Show Less' : `Show ${sortedGames.length - (limit ?? 0)} More`}
+          <span className={`transition-transform inline-block ${expanded ? 'rotate-180' : ''}`}>
+            ▾
+          </span>
+        </button>
+      )}
     </div>
   );
 }
