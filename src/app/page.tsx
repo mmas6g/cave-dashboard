@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'cfb' | 'nfl'>('cfb');
+  const [caveOpen, setCaveOpen] = useState(true);
 
   return (
     <main className="min-h-screen bg-gray-900 text-white p-6">
@@ -29,10 +30,15 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Cave Toggle Placeholder */}
+      {/* Cave Toggle */}
       <div className="flex justify-center mb-8">
-        <button className="px-4 py-2 bg-green-600 rounded-lg font-bold">
-          Cave: OPEN
+        <button
+          onClick={() => setCaveOpen(!caveOpen)}
+          className={`px-6 py-3 rounded-lg font-bold text-lg transition-colors ${
+            caveOpen ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
+          }`}
+        >
+          Cave: {caveOpen ? 'OPEN' : 'CLOSED'}
         </button>
       </div>
 
