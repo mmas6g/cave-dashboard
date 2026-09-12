@@ -60,6 +60,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#FBF3E7] text-stone-800 p-6">
+
       {/* Tabs */}
       <div className="flex justify-center gap-4 mb-6">
         <button

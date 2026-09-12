@@ -63,8 +63,18 @@ export async function GET() {
           window: getWindow(hour),
           network,
           score,
-          home: { name: `${home.team.location} ${home.team.name}`, abbreviation: home.team.abbreviation, record: homeRecord },
-          away: { name: `${away.team.location} ${away.team.name}`, abbreviation: away.team.abbreviation, record: awayRecord },
+         home: {
+  name: `${home.team.location} ${home.team.name}`,
+  abbreviation: home.team.abbreviation,
+  record: homeRecord,
+  logo: home.team.logo || home.team.logos?.[0]?.href || null,
+},
+away: {
+  name: `${away.team.location} ${away.team.name}`,
+  abbreviation: away.team.abbreviation,
+  record: awayRecord,
+  logo: away.team.logo || away.team.logos?.[0]?.href || null,
+},
         };
       })
       .filter((game: any) => game.weekday === 'Sunday');
